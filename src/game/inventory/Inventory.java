@@ -34,8 +34,19 @@ public class Inventory {
 	}
 	
 	public class Hand {
-		Item item;
-		int amount = 0;
+		public Item item;
+		public int amount = 0;
+		
+		public void drop(int amount, Level level, float x, float y, float velocityX, float velocityY) {
+			if (item != null) {
+				if (amount > item.getMaxStack())
+					amount = item.getMaxStack();
+				
+				ItemEntity item = new ItemEntity(this.item, amount, x, y, velocityX, velocityY);
+				level.addEntity(item);
+				decrementItem(amount);
+			}
+		}
 		
 		public void setItem(Item item, int amount) {
 			this.item = item;
@@ -57,6 +68,17 @@ public class Inventory {
 			else
 				this.amount += amount;
 			return total;
+		}
+
+		public void decrementItem(int amount) {
+			if (item == null)
+				return;
+			
+			if (this.amount - amount <= 0) {
+				item = null;
+				this.amount = 0;
+			} else
+				this.amount -= amount;
 		}
 	}
 	
@@ -177,21 +199,51 @@ public class Inventory {
 				screen.drawString("" + hand.amount, Mouse.getMouseX() + 5, Mouse.getMouseY() + 35, 0, numberFont, Color.white);
 		}		
 	}
+	
+	public void drop(Slot slot, int amount, Level level, float x, float y, float velocityX, float velocityY) {
+		if (slot.item != null) {
+			if (amount > slot.item.getMaxStack())
+				amount = slot.item.getMaxStack();
+			
+			ItemEntity item = new ItemEntity(slot.item, amount, x, y, velocityX, velocityY);
+			level.addEntity(item);
+			slot.decrementItem(amount);
+		}
+	}
+	
+	public void giveItem(Item item, int amount) {
+		int leftOver = -1;
+		for (int i = 0;i < slots.length;i++) {
+			if (slots[i].item == item) {
+				leftOver = slots[i].incrementItem(amount);
+				if (leftOver <= 0)
+					return;
+			}
+		}
+		
+		for (int i = 0;i < slots.length;i++) {
+			if (slots[i].item == null) {
+				slots[i].setItem(item, 0);
+				leftOver = slots[i].incrementItem(leftOver == -1 ? amount : leftOver);
+				if (leftOver <= 0)
+					return;
+			}
+		}
+	}
 
-	public boolean giveItem(Item item, int amount) {
+/*	public boolean giveItem(Item item, int amount) {
 		return addExistingItem(item, amount) ? true : AddAItemToEmpty(item, amount);
 	}
-	
-	public void setItem(Item item, int amount, int index) {
-		if (index < 0 || index > slots.length)
-			return;
-		slots[index].setItem(item, amount);
-	}
-	
+
 	private boolean AddAItemToEmpty(Item item, int amount) {
 		int index = getItemSlot(null);
 		if (index == -1)
 			return false;
+		if (amount > item.getMaxStack()) {
+			AddAItemToEmpty(item, amount - item.getMaxStack());
+			amount -= amount - item.getMaxStack();
+		}
+			
 		slots[index].setItem(item, amount);
 		return true;
 	}
@@ -201,7 +253,9 @@ public class Inventory {
 		if (index == -1)
 			return false;
 		
-		slots[index].currentStack += amount;
+		int leftOver = slots[index].incrementItem(amount);
+		if (leftOver > 0)
+			AddAItemToEmpty(item, leftOver);
 		return true;
 	}
 	
@@ -211,17 +265,14 @@ public class Inventory {
 				return i;
 		}
 		return -1;
+	}*/
+
+	public void setItem(Item item, int amount, int index) {
+		if (index < 0 || index > slots.length)
+			return;
+		slots[index].setItem(item, amount);
 	}
 	
-	public void drop(Slot slot, Level level, float x, float y, float velocityX, float velocityY) {
-		if (slot.item != null) {
-			ItemEntity item = new ItemEntity(slot.item, x, y, velocityX, velocityY);
-			level.addEntity(item);
-			slot.item = null;
-			slot.currentStack = 0;
-		}
-	}
-
 	private void setSelectedSlot(int index) {
 		for (int i = 0;i < 10;i++) {
 			slots[i].textureIndex = 0;
@@ -247,5 +298,13 @@ public class Inventory {
 	 
 	public boolean getVisible() {
 		return visible;
+	}
+	
+	public int getHoverSlot() {
+		return hoverSlot;
+	}
+	
+	public Hand getHand() {
+		return hand;
 	}
 }

@@ -1,7 +1,5 @@
 package game.entity;
 
-import java.awt.Rectangle;
-
 import Graphics.Misc.Screen;
 import Graphics.Misc.Texture;
 

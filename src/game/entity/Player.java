@@ -37,7 +37,9 @@ public class Player extends Mob {
 		inv.giveItem(itemSword, 1);
 		inv.giveItem(itemPickaxe, 1);
 		inv.giveItem(itemBow, 1);
-		inv.setItem(itemArrow, 60, 9);
+		inv.giveItem(itemArrow, 58);
+		
+		inv.giveItem(itemArrow, 1);
 		
 		itemSword.init(this);
 		itemPickaxe.init(this);
@@ -58,10 +60,10 @@ public class Player extends Mob {
 			if (item != null)
 				item.use(this);
 		}	
-		
-		if (Keyboard.isKeyTyped(KeyEvent.VK_Q))
-			inv.drop(inv.getSelectedSlot(), level, dir == 1 ? x + 5 : x - width + 5, y, 4 * dir, 0);
 	
+		if (Mouse.getMouseButton() == 3 && inv.getHoverSlot() == -1 && inv.getHand().item != null)
+			inv.getHand().drop(inv.getHand().amount, level, x, y, 2 * dir, -1);
+		
 		int xo = (int) (x + width / 2) - Main.WIDTH / 2;
 		int yo = (int) (y + height / 2) - Main.HEIGHT / 2;
 		
@@ -115,7 +117,7 @@ public class Player extends Mob {
 			if (dir != -1) 
 				velocityX = 0;
 			velocityX -= acceleration;
-
+			
 			dir = -1;
 		}  else	if (Keyboard.isKeyPressed(KeyEvent.VK_D) || Keyboard.isKeyPressed(KeyEvent.VK_RIGHT)) {
 			if (dir != 1) 
@@ -136,6 +138,7 @@ public class Player extends Mob {
 		
 		if (Keyboard.isKeyTyped(KeyEvent.VK_ESCAPE)) {
 			inv.toggle();
+		//	inv.giveItem(itemArrow, 18);
 		}
 		
 		if (collideWithTop)

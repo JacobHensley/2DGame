@@ -1,6 +1,5 @@
 package game.level;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,6 +14,7 @@ import game.entity.Entity;
 import game.entity.Player;
 import game.level.tile.Tile;
 import game.level.tile.VoidTile;
+import game.math.AABB;
 
 public class Level {
 	
@@ -101,10 +101,10 @@ public class Level {
 		entities.add(entity);
 	}
 	
-	public List<Entity> findEntities(Rectangle r) {
+	public List<Entity> findEntities(AABB r) {
 		List<Entity> result = new ArrayList<Entity>();
 		for (int i = 0;i < entities.size();i++) {
-			if (entities.get(i).getBounds().intersects(r))
+			if (entities.get(i).getBounds().overlaps(r))
 				result.add(entities.get(i));
 		}
 		return result;

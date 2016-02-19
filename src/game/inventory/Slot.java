@@ -57,6 +57,16 @@ public class Slot {
 			item = null;
 	}
 	
+	public void decrementItem(int amount) {
+		if (item == null)
+			return;
+		
+		if (currentStack - amount <= 0)
+			item = null;
+		else
+			currentStack -= amount;
+	}
+	
 	public int incrementItem(int amount) {
 		int total = currentStack + amount - item.getMaxStack();
 		if (total > 0)

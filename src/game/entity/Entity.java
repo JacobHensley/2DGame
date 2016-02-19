@@ -1,11 +1,11 @@
 package game.entity;
 
-import java.awt.Rectangle;
 import java.util.Random;
 
 import Graphics.Misc.Screen;
 import game.level.Level;
 import game.level.tile.Tile;
+import game.math.AABB;
 
 public class Entity {
 	
@@ -167,8 +167,8 @@ public class Entity {
 		return dir;
 	}
 	
-	public Rectangle getBounds() {
-		return new Rectangle((int)x, (int)y, width, height);
+	public AABB getBounds() {
+		return new AABB(x, y, width, height);
 	}
 	
 }

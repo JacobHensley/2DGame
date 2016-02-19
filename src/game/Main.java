@@ -19,13 +19,10 @@ public class Main {
 	
 	private Dummy dummy;
 	
-	//TODO:	Implement ItemEntity
-	//TODO: Implement Drop Item Method
-	//TODO:	Implement Arrow
-	
-	//TODO: Implement (OBB)
-	//TODO: Implement Vector2i
-	//TODO:	Learn about Normals
+	//TODO: Finish Drop Item and Pickup Item Systems (1)
+	//TODO: Fix drawLine() Method in Screen (2)
+	//TODO: Swap X and Y with Vector2f (3)
+	//TODO: Finish OBB and AABB - Consult Cherno (4)
 	
 	public Main() {
 		window = new Window("2DGame", WIDTH, HEIGHT);
@@ -42,7 +39,7 @@ public class Main {
 		level.addEntity(dummy);
 		window.showWindow();
 	}
-	
+
 	public static void main(String args[]) {
 		Main main = new Main();
 		
