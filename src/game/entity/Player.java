@@ -2,6 +2,8 @@ package game.entity;
 
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import Graphics.Misc.Screen;
 import Graphics.Misc.Texture;
@@ -29,18 +31,21 @@ public class Player extends Mob {
 	Item itemPickaxe = new Item("Fiery Pickaxe", 3, 1, new Texture("res/Textures/Pickaxe.png"));
 	Item itemArrow = new Item("Arrow", 4, 60, new Texture("res/Textures/Arrow.png"));
 	Item itemBow = new Item("Wooden Bow", 5, 1, new Texture("res/Textures/Bow.png"));
+
+	private int pickupTimer;
 	
 	public Player(float x, float y) {
 		this.x = x;
 		this.y = y;
 
+		//Debug
 		inv.giveItem(itemSword, 1);
 		inv.giveItem(itemPickaxe, 1);
 		inv.giveItem(itemBow, 1);
 		inv.giveItem(itemArrow, 58);
 		
 		inv.giveItem(itemArrow, 1);
-		
+
 		itemSword.init(this);
 		itemPickaxe.init(this);
 		itemHook.init(this);
@@ -64,6 +69,8 @@ public class Player extends Mob {
 		if (Mouse.getMouseButton() == 3 && inv.getHoverSlot() == -1 && inv.getHand().item != null)
 			inv.getHand().drop(inv.getHand().amount, level, x, y, 2 * dir, -1);
 		
+		pickupItem();
+		
 		int xo = (int) (x + width / 2) - Main.WIDTH / 2;
 		int yo = (int) (y + height / 2) - Main.HEIGHT / 2;
 		
@@ -81,6 +88,49 @@ public class Player extends Mob {
 			yo = maxYO;
 		
 		level.setOffset(xo, yo);
+	}
+	
+	public boolean overLapItem() {
+		List<Entity> entities = level.findEntities(getBounds());
+		for (int i = 0;i < entities.size();i++) {
+			if (entities.get(i) instanceof ItemEntity)
+				return true;
+		}
+		
+		return false;
+	}
+	
+	
+	public void pickupItem() {
+		List<ItemEntity> itemEntities = new ArrayList<ItemEntity>();;
+		List<Entity> entities = level.getEntities();
+		for (int i = 0;i < entities.size();i++) {
+			Entity e = entities.get(i);
+			if (e instanceof ItemEntity && e.getBounds().overlaps(getBounds())) {
+				ItemEntity item = (ItemEntity) e;
+				itemEntities.add(item);
+			}
+		}
+		
+		if (itemEntities.size() > 0 && pickupTimer < 60)
+			pickupTimer += itemEntities.size();
+		else if (pickupTimer > 0)
+			pickupTimer -= 1;
+		
+		
+				
+		for (int i = 0;i < itemEntities.size();i++) {
+			if (pickupTimer >= 60) {
+				ItemEntity item = itemEntities.get(i);
+				inv.giveItem(item.getItem(), item.getAmount());
+				level.getEntities().remove(item);
+				itemEntities.remove(i);
+				if (itemEntities.size() >= 1)
+					pickupTimer = 20;
+				else
+					pickupTimer = 0;
+			}
+		}		
 	}
 	
 	public void render(Screen screen) {
@@ -136,11 +186,9 @@ public class Player extends Mob {
 			canJump = true;
 		}
 		
-		if (Keyboard.isKeyTyped(KeyEvent.VK_ESCAPE)) {
+		if (Keyboard.isKeyTyped(KeyEvent.VK_ESCAPE))
 			inv.toggle();
-		//	inv.giveItem(itemArrow, 18);
-		}
-		
+			
 		if (collideWithTop)
 			velocityY = 0;
 		
@@ -175,5 +223,4 @@ public class Player extends Mob {
 		ya += velocityY;
 		move(xa, ya);
 	}
-	
 }

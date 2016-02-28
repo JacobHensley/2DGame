@@ -18,8 +18,8 @@ public class Entity {
 	protected boolean collideWithSide = false;
 	protected boolean collideWithTop = false;
 	
-	float velocityX, velocityY, acceleration = 0.3f, friction = 0.2f, gravity = 0.4f;
-	float maxHorizontalSpeed = 3.0f, maxVerticalSpeed = 6.0f;
+	protected float velocityX, velocityY, acceleration = 0.2f, friction = 0.2f, gravity = 0.4f;
+	protected float maxHorizontalSpeed = 3.0f, maxVerticalSpeed = 6.0f;
 	
 	protected static final Random random = new Random();
 

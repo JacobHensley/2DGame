@@ -7,33 +7,40 @@ import game.inventory.item.Item;
 
 public class ItemEntity extends Entity {
 	
-	private Item item;
-	float velocityX, velocityY, acceleration = 0.1f, friction = 0.05f, gravity = 0.1f;
-	float maxHorizontalSpeed = 6.0f, maxVerticalSpeed = 12.0f;
-	private int amount = 0;
-	
+	protected Item item;
+	protected int amount = 0;
+
 	public ItemEntity(Item item, float x, float y) {
 		this.item = item;
 		this.x = x;
 		this.y = y;
-		
-		
+	
+		init();
+	}
+	
+	public ItemEntity(Item item, int amount, float x, float y, float velocityX, float velocityY) {
+		this.item = item;
+		this.x = x;
+		this.y = y;
+		 
+		this.velocityX = velocityX;
+		this.velocityY = velocityY;
+		this.amount = amount;
+		 
+		init();
+	}
+	
+	public void init() {
+		acceleration = 0.1f;
+		friction = 0.05f;
+		gravity = 0.1f;
+		maxHorizontalSpeed = 3.0f;
+		maxVerticalSpeed = 6+.0f;
+		 
 		width = item.getTexture().getWidth() - 1;
 		height = item.getTexture().getHeight() - 1;
 	}
-	
-	 public ItemEntity(Item item, int amount, float x, float y, float velocityX, float velocityY) {
-		 this.item = item;
-		 this.x = x;
-		 this.y = y;
-		 this.velocityX = velocityX;
-		 this.velocityY = velocityY;
-		 this.amount = amount;
-		 
-		 width = item.getTexture().getWidth() - 1;
-		 height = item.getTexture().getHeight() - 1;
-	 }
-	
+	 
 	public void update() {
 		float xa = 0.0f, ya = 0.0f; 
 		
@@ -73,6 +80,7 @@ public class ItemEntity extends Entity {
 		ya += velocityY;
 		move(xa, ya);
 	}
+	
 	public void render(Screen screen) {
 		screen.drawTexture(item.getTexture(), (int)x - level.getXOffset(), (int)y - level.getYOffset());
 		

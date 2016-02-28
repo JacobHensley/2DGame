@@ -1,6 +1,9 @@
 package game.math;
 
+import java.awt.Color;
+
 import Graphics.Misc.Screen;
+import game.level.Level;
 
 public class OBB {
 
@@ -124,16 +127,22 @@ public class OBB {
 		return overlaps1Way(other) && other.overlaps1Way(this);
 	}
 
-	public void render(Screen screen, int color , boolean solid) {
+	public void render(Screen screen, Color color , boolean solid) {
 		for (int c = 0; c < 4; c++) {
 			screen.drawLine((int) corners[c & 3].x, (int) corners[c & 3].y, (int) corners[(c + 1) & 3].x, (int) corners[(c + 1) & 3].y, color);
+		}
+	}
+	
+	public void debugRender(Screen screen, Level level, Color color , boolean solid) {
+		for (int c = 0; c < 4; c++) {
+			screen.drawLine((int) corners[c & 3].x - level.getXOffset(), (int) corners[c & 3].y - level.getYOffset(), (int) corners[(c + 1) & 3].x - level.getXOffset(), (int) corners[(c + 1) & 3].y- level.getYOffset(), color);
 		}
 	}
 
 	public Vector2f[] getCorners() {
 		return corners;
 	}
-
+	
 	public Vector2f[] getAxis() {
 		return axis;
 	}

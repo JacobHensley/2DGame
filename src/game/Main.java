@@ -1,10 +1,13 @@
 package game;
 
+import Graphics.Misc.Texture;
 import Graphics.Window.Window;
 import Input.Keyboard;
 import Input.Mouse;
+import game.entity.ArrowEntity;
 import game.entity.Dummy;
 import game.entity.Player;
+import game.inventory.item.Item;
 import game.level.Level;
 
 public class Main {
@@ -19,10 +22,15 @@ public class Main {
 	
 	private Dummy dummy;
 	
-	//TODO: Finish Drop Item and Pickup Item Systems (1)
-	//TODO: Fix drawLine() Method in Screen (2)
-	//TODO: Swap X and Y with Vector2f (3)
-	//TODO: Finish OBB and AABB - Consult Cherno (4)
+	ArrowEntity arrow = new ArrowEntity(new Item("Arrow", 5, 3, new Texture("res/Textures/Arrow.png")), new Texture("res/Textures/ArrowEntity.png"), 90.0f, 1.0f, 1.0f, 100, 100);
+	
+	//TODO:	Add Collision System For ArrowEntity Class (1)
+	//TODO: Add Bow Class (2)
+	//TODO: Add System For Shooting Arrows From Bow (3)
+	
+	//TODO: drawLine() Method in Screen Work - Consult Cherno
+	//TODO: Drop Item and Pickup Item Systems Work - Consult Cherno
+	//TODO: OBB and AABB Works - Consult Cherno
 	
 	public Main() {
 		window = new Window("2DGame", WIDTH, HEIGHT);
@@ -37,6 +45,7 @@ public class Main {
 
 		level.addEntity(player);
 		level.addEntity(dummy);
+		level.addEntity(arrow);
 		window.showWindow();
 	}
 
