@@ -11,6 +11,7 @@ import Input.Keyboard;
 import Input.Mouse;
 import game.Main;
 import game.inventory.Inventory;
+import game.inventory.item.Bow;
 import game.inventory.item.Item;
 import game.inventory.item.Sword;
 import game.level.tile.Tile;
@@ -30,7 +31,7 @@ public class Player extends Mob {
 	Item itemHook = new Item("Hook Shot", 2, 1, new Texture("res/Textures/Hook.png"));
 	Item itemPickaxe = new Item("Fiery Pickaxe", 3, 1, new Texture("res/Textures/Pickaxe.png"));
 	Item itemArrow = new Item("Arrow", 4, 60, new Texture("res/Textures/Arrow.png"));
-	Item itemBow = new Item("Wooden Bow", 5, 1, new Texture("res/Textures/Bow.png"));
+	Item itemBow = new Bow("Wooden Bow", 5, 1, new Texture("res/Textures/Bow.png"));
 
 	private int pickupTimer;
 	
@@ -56,12 +57,50 @@ public class Player extends Mob {
 		height = texture.getHeight() - 1;
 	}
 	
+	public void pickupItem() {
+		List<ItemEntity> itemEntities = overLapingItems();
+		
+		if (itemEntities.size() > 0 && pickupTimer < 60)
+			pickupTimer += itemEntities.size();
+		else if (pickupTimer > 0)
+			pickupTimer -= 1;
+		
+		for (int i = 0;i < itemEntities.size();i++) {
+			if (pickupTimer >= 60) {
+				ItemEntity item = itemEntities.get(i);
+				TakeItemFromLevel(item);
+				itemEntities.remove(i);
+				if (itemEntities.size() >= 1)
+					pickupTimer = 20;
+				else
+					pickupTimer = 0;
+			}
+		}		
+	}
+	
+	public List<ItemEntity> overLapingItems() {
+		List<ItemEntity> result = new ArrayList<ItemEntity>();
+		for (int i = 0;i < level.getEntities().size();i++) {
+			Entity e = level.getEntities().get(i);
+			if (e instanceof ItemEntity && e.getBounds().overlaps(getBounds())) {
+				ItemEntity item = (ItemEntity) e;
+				result.add(item);
+			}
+		}
+		return result;
+	}
+	
+	public void TakeItemFromLevel(ItemEntity item) {
+		inv.giveItem(item.getItem(), item.getAmount());
+		level.getEntities().remove(item);
+	}
+	
 	public void update() {
 		move();
 		inv.update();
 
 		Item item = inv.getSelectedItem();
-		if (Mouse.getMouseButton() == 1) {
+		if (Mouse.mouseClicked(1)) {
 			if (item != null)
 				item.use(this);
 		}	
@@ -88,49 +127,6 @@ public class Player extends Mob {
 			yo = maxYO;
 		
 		level.setOffset(xo, yo);
-	}
-	
-	public boolean overLapItem() {
-		List<Entity> entities = level.findEntities(getBounds());
-		for (int i = 0;i < entities.size();i++) {
-			if (entities.get(i) instanceof ItemEntity)
-				return true;
-		}
-		
-		return false;
-	}
-	
-	
-	public void pickupItem() {
-		List<ItemEntity> itemEntities = new ArrayList<ItemEntity>();;
-		List<Entity> entities = level.getEntities();
-		for (int i = 0;i < entities.size();i++) {
-			Entity e = entities.get(i);
-			if (e instanceof ItemEntity && e.getBounds().overlaps(getBounds())) {
-				ItemEntity item = (ItemEntity) e;
-				itemEntities.add(item);
-			}
-		}
-		
-		if (itemEntities.size() > 0 && pickupTimer < 60)
-			pickupTimer += itemEntities.size();
-		else if (pickupTimer > 0)
-			pickupTimer -= 1;
-		
-		
-				
-		for (int i = 0;i < itemEntities.size();i++) {
-			if (pickupTimer >= 60) {
-				ItemEntity item = itemEntities.get(i);
-				inv.giveItem(item.getItem(), item.getAmount());
-				level.getEntities().remove(item);
-				itemEntities.remove(i);
-				if (itemEntities.size() >= 1)
-					pickupTimer = 20;
-				else
-					pickupTimer = 0;
-			}
-		}		
 	}
 	
 	public void render(Screen screen) {
@@ -167,13 +163,11 @@ public class Player extends Mob {
 			if (dir != -1) 
 				velocityX = 0;
 			velocityX -= acceleration;
-			
 			dir = -1;
 		}  else	if (Keyboard.isKeyPressed(KeyEvent.VK_D) || Keyboard.isKeyPressed(KeyEvent.VK_RIGHT)) {
 			if (dir != 1) 
 				velocityX = 0;
 			velocityX += acceleration;
-			
 			dir = 1;
 		}
 		
@@ -186,6 +180,10 @@ public class Player extends Mob {
 			canJump = true;
 		}
 		
+		if (Keyboard.isKeyTyped(KeyEvent.VK_F)) {
+			ArrowEntity arrow = new ArrowEntity(itemArrow, new Texture("res/textures/ArrowEntity_2.png"), x, y, 10 * dir, -5f, 45.0f);
+			level.addEntity(arrow);
+		}
 		if (Keyboard.isKeyTyped(KeyEvent.VK_ESCAPE))
 			inv.toggle();
 			
@@ -202,7 +200,7 @@ public class Player extends Mob {
 		if (velocityX > 0) {
 			velocityX -= friction;
 			if (velocityX < 0) 
-				velocityX = 0;		
+				velocityX = 0;
 		} else if (velocityX < 0) {
 			velocityX += friction;
 			if (velocityX > 0) 

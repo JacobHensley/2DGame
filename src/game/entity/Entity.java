@@ -27,7 +27,7 @@ public class Entity {
 		this.level = level;
 	}
 
-	private float[] calculateRemainingSpace(float xa, float ya) {
+	protected float[] calculateRemainingSpace(float xa, float ya) {
 		float rx = 0, ry = 0;
 		float absXa = Math.abs(xa);
 		float absYa = Math.abs(ya);
@@ -127,7 +127,7 @@ public class Entity {
 		return values;
 	}
 	
-	private int sign(float value) {
+	protected int sign(float value) {
 		return value > 0 ? 1 : -1;
 	}
 	

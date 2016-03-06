@@ -1,7 +1,6 @@
 package game.entity;
 
 import java.awt.Rectangle;
-
 import Graphics.Misc.Screen;
 import game.inventory.item.Item;
 
@@ -9,7 +8,7 @@ public class ItemEntity extends Entity {
 	
 	protected Item item;
 	protected int amount = 0;
-
+	
 	public ItemEntity(Item item, float x, float y) {
 		this.item = item;
 		this.x = x;
@@ -22,11 +21,10 @@ public class ItemEntity extends Entity {
 		this.item = item;
 		this.x = x;
 		this.y = y;
-		 
+		
+		this.amount = amount;
 		this.velocityX = velocityX;
 		this.velocityY = velocityY;
-		this.amount = amount;
-		 
 		init();
 	}
 	
@@ -35,7 +33,7 @@ public class ItemEntity extends Entity {
 		friction = 0.05f;
 		gravity = 0.1f;
 		maxHorizontalSpeed = 3.0f;
-		maxVerticalSpeed = 6+.0f;
+		maxVerticalSpeed = 6.0f;
 		 
 		width = item.getTexture().getWidth() - 1;
 		height = item.getTexture().getHeight() - 1;

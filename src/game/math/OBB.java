@@ -138,7 +138,7 @@ public class OBB {
 			screen.drawLine((int) corners[c & 3].x - level.getXOffset(), (int) corners[c & 3].y - level.getYOffset(), (int) corners[(c + 1) & 3].x - level.getXOffset(), (int) corners[(c + 1) & 3].y- level.getYOffset(), color);
 		}
 	}
-
+	
 	public Vector2f[] getCorners() {
 		return corners;
 	}
