@@ -26,7 +26,7 @@ public class ArrowEntity extends ItemEntity {
 	public ArrowEntity(Item item, Texture texture, float x, float y, float velocityX, float velocityY, float angle) {
 		super(item, 1, x, y, velocityX, velocityY);
 		this.angle = angle;
-		this.texture = texture;
+		this.texture = Texture.rotate(texture, Math.toRadians(angle));
 		
 		acceleration = 0.1f;
 		friction = 0.1f;
@@ -34,8 +34,8 @@ public class ArrowEntity extends ItemEntity {
 		maxHorizontalSpeed = 3.0f;
 		maxVerticalSpeed = 6.0f;
 		
-		width = texture.getWidth();
-		height = texture.getHeight();
+		width = 32;
+		height = 14;
 		obb = new OBB(new Vector2f(x + width / 2, y + height / 2), width, height, angle);
 	}
 	
@@ -53,6 +53,8 @@ public class ArrowEntity extends ItemEntity {
 			if (velocityX > 0) 
 				velocityX = 0;
 		}
+
+		texture = Texture.rotate(texture, -1);
 		
 	    xa += velocityX;
 	    ya += velocityY;
@@ -66,36 +68,40 @@ public class ArrowEntity extends ItemEntity {
 		float absXa = Math.abs(xa);
 		float absYa = Math.abs(ya);
 		
-		for (int xx = 0;xx < absXa;xx++) {
-			for (int c = 0;c < 4;c++) { 
-				Tile tile = level.getTileFromEntityPos(obb.getCorners()[c].x + xx * sign(xa), obb.getCorners()[c].y);
-				if (tile.isSolid() && xx * sign(xa) < rx)
-					rx = xx * sign(xa);
+		for (int c = 0;c < 4;c++) { 
+			Vector2f corrner =  obb.getCorners()[c];
+			for (int xx = 0;xx < absXa;xx++) {
+				int dx = xx * sign(xa);
+				
+				Tile tile = level.getTileFromEntityPos(corrner.x + dx, corrner.y);
+				if (tile.isSolid() && Math.abs(dx) < Math.abs(rx))
+					rx = dx; 
 			}
 		}
+		for (int c = 0;c < 4;c++) { 
+			Vector2f corrner =  obb.getCorners()[c];
+			for (int yy = 0;yy < absYa;yy++) {
+				int dy = yy * sign(ya);
 		
-		for (int yy = 0;yy < absYa;yy++) {
-			for (int c = 0;c < 4;c++) { 
-				Tile tile = level.getTileFromEntityPos(obb.getCorners()[c].x , obb.getCorners()[c].y + yy * sign(ya));
-				if (tile.isSolid() && yy * sign(ya) < ry)
-					ry = yy * sign(ya);
+				Tile tile = level.getTileFromEntityPos(corrner.x + dy, corrner.y);
+				if (tile.isSolid() && Math.abs(dy) < Math.abs(ry))
+					ry = dy; 
 			}
 		}
 		
 		x += rx;
 		y += ry;
 		
-		obb = new OBB(new Vector2f(x + width / 2, y + height / 2), width, height, angle);
+		obb = new OBB(new Vector2f(x + texture.getWidth() / 2, y + texture.getHeight() / 2), width, height, angle);
 	}
 	
 	public void render(Screen screen) {
-		screen.drawTexture(texture, (int)x - level.getXOffset(), (int)y - level.getYOffset(), angle);
+		screen.drawTexture(texture, (int)x - level.getXOffset(), (int)y - level.getYOffset());
 		for (int i = 0;i < 4;i++) {
 			screen.drawRect((int)obb.getCorners()[i].x - level.getXOffset(), (int)obb.getCorners()[i].y - level.getYOffset(), 5, 5, 0, 0x0000FF);
 		}
 		
 		screen.drawString("Angle: " + angle, (int)x - 10 - level.getXOffset(), (int)y - 10 - level.getYOffset(), 0, debugFont, Color.white);
-		
 		obb.debugRender(screen, level, Color.red, false);
 	}
 	

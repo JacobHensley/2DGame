@@ -31,7 +31,7 @@ public class Player extends Mob {
 	Item itemHook = new Item("Hook Shot", 2, 1, new Texture("res/Textures/Hook.png"));
 	Item itemPickaxe = new Item("Fiery Pickaxe", 3, 1, new Texture("res/Textures/Pickaxe.png"));
 	Item itemArrow = new Item("Arrow", 4, 60, new Texture("res/Textures/Arrow.png"));
-	Item itemBow = new Bow("Wooden Bow", 5, 1, new Texture("res/Textures/Bow.png"));
+	Bow itemBow = new Bow("Wooden Bow", 5, 1, new Texture("res/Textures/Bow.png"));
 
 	private int pickupTimer;
 	
@@ -180,10 +180,12 @@ public class Player extends Mob {
 			canJump = true;
 		}
 		
+		//Debug
 		if (Keyboard.isKeyTyped(KeyEvent.VK_F)) {
-			ArrowEntity arrow = new ArrowEntity(itemArrow, new Texture("res/textures/ArrowEntity_2.png"), x, y, 10 * dir, -5f, 45.0f);
+			ArrowEntity arrow = new ArrowEntity(itemArrow, new Texture("res/textures/ArrowEntity_2.png"), x, y, 10 * dir, -5f, (float) Math.toDegrees(itemBow.getAngleToMouse(this)));
 			level.addEntity(arrow);
 		}
+		
 		if (Keyboard.isKeyTyped(KeyEvent.VK_ESCAPE))
 			inv.toggle();
 			
@@ -220,5 +222,9 @@ public class Player extends Mob {
 		xa += velocityX;
 		ya += velocityY;
 		move(xa, ya);
+	}
+	
+	public Inventory getInv() {
+		return inv;
 	}
 }

@@ -19,11 +19,9 @@ public class Main {
 	
 	private Dummy dummy;
 
-	//TODO:	Finish Collision System For ArrowEntity Class (1)
-	//TODO: Make Rotating Texture More "res/textures/" (2)
-	//TODO: Add Bow Class (3)
-	//TODO: Add System For Shooting Arrows From Bow (4)
-	//TODO: When Checking if AABB overlaps OBB Convert AABB to OBB (5)
+	//TODO: Make Rotating Texture More Efficient (1)
+	//TODO: Finish Bow Class (2)
+	//TODO: When Checking if AABB overlaps OBB Convert AABB to OBB (3)
 	
 	public Main() {
 		window = new Window("2DGame", WIDTH, HEIGHT);
